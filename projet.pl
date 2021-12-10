@@ -132,7 +132,8 @@ suite(R,Abi,Abi1,Tbox) :-
     saisie_et_traitement_prop_a_demontrer(Abi,Abi1,Tbox).
 
 % ------------------------------------------------------------------------------------------
-% On met en place les méthodes nécessaires
+% On met en place les méthodes utilisées plus haut
+% ------------------------------------------------------------------------------------------
 
 % Méthode permettant l'acquisition de propositions du type 1 (I : C)
 acquisition_prop_type1(Abi,Abi1,Tbox) :-
@@ -144,14 +145,34 @@ acquisition_prop_type1(Abi,Abi1,Tbox) :-
     nl, write('Veuillez entrer le concept :'),
     nl, read(C),
 
-    % On effectue les manipulations sur le concept lu
-    % On crée un concept C (C), on le remplace (RC) puis on effectue sa négation (NRC)
-    concept(C), replace(C, RC), nnf(not(RC),NRC),
+    % On effectue les manipulations sur le concept
+    % On formalise le concept (C), on le remplace (RC) puis on effectue sa négation (NRC)
+    concept(C),
+    replace(C, RC),
+    nnf(not(RC),NRC),
 
     % On ajoute l'élément (I, NRC) à la ABox
     concat([((I,NRC))],Abi,Abi1),
 
     % On affiche la ABox après modification
     nl, write(Abi1).
+
+% ------------------------------------------------------------------------------------------
+
+% Méthode permettant l'acquisition de proposition du type 2 : (C1 and C2 compris dans 'neg')
+acquisition_prop_type2(Abi,Abi1,Tbox) :-
+    % On entre le concept 1
+    nl, write('Veuillez entrer l"instance :'),
+    nl, read(C1),
+
+    % On entre le concept 2
+    nl, write('Veuillez entrer l"instance :'),
+    nl, read(C2),
+
+    % On effectue les manipulations sur les concepts
+    % On formalise les concepts (C1 et C2), on effectue le remplacement (RC1 et RC2)
+    concept(C1), concept(C2),
+    replace(and(C1, C2), and(RC1, RC2)),
+    
 
 % ##########################################################################################
