@@ -36,7 +36,7 @@ concept(all(R,C)) :- concept(C) ,concept(R),!.
 concept(some(R,C)) :- concept(C),concept(R) ,!.
 concept(not(C)) :- concept(C) ,!.
 concept(C) :- cnamea(C),!.
-concept(C) :- rname(C),! .
+concept(C) :- rname(C),!.
 concept(C) :- cnamena(C),!.
 
 /* Lecture */
