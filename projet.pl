@@ -1,7 +1,7 @@
 %                                                            PROJET
 %                                                         LRC - M1 DAC
-%                                                  KRISNI Almehdi - JDAY Achraf
-%                                           https://github.com/krisninho2000/Projet_LRC
+%                                                 KRISNI Almehdi - J'DAY Achraf
+%                                          https://github.com/krisninho2000/Projet_LRC
 
 % Partie TBox
 equiv(sculpteur,and(personne,some(aCree,sculpture))).
@@ -54,4 +54,3 @@ premiere_etape(Tbox, Abi, Abr) :-
     setof((X, Y, Z), instR(X, Y, Z), Abr).
 
 % Partie 2
-
