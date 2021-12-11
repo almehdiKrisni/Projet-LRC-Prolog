@@ -1,13 +1,13 @@
-%                                                            PROJET
-%                                                         LRC - M1 DAC
-%                                                 KRISNI Almehdi - J'DAY Achraf
-%                                          https://github.com/krisninho2000/Projet_LRC
+%                                                 PROJET
+%                                              LRC - M1 DAC
+%                                     KRISNI Almehdi - J'DAY Achraf
+%                               https://github.com/krisninho2000/Projet_LRC
 
-% ------------------------------------------------------------------------------------------
+% ##########################################################################################
 
 % PARTIE PREPARATION
 
-% ------------------------------------------------------------------------------------------
+% ##########################################################################################
 
 % TBox
 equiv(sculpteur,and(personne,some(aCree,sculpture))).
@@ -85,7 +85,7 @@ concept(C) :- cnamena(C), !.
 % ------------------------------------------------------------------------------------------
 
 % Prédicat prédéfini testant l'appartenance d'un élément X à une liste L
-member(X, L).
+% member(X, L).
 
 % ------------------------------------------------------------------------------------------
 
@@ -101,8 +101,8 @@ replace(C,RC) :- setof(X,cnamena(X),L), member(C,L), equiv(C,RC), !.
 % ------------------------------------------------------------------------------------------
 
 % Méthode réalise la concaténation de deux listes L1 et L2 et renvoie la liste L3
-concate([],L1,L1).
-concate([X|Y],L1,[X|L2]) :- concat(Y,L1,L2).
+concat([],L1,L1).
+concat([X|Y],L1,[X|L2]) :- concat(Y,L1,L2).
 
 % ------------------------------------------------------------------------------------------
 
@@ -189,8 +189,8 @@ suite(2,Abi,Abi1,Tbox) :-
 % ------------------------------------------------------------------------------------------
 
 suite(R,Abi,Abi1,Tbox) :-
-    nl,write('Cette réponse est incorrecte.'),nl,
-    saisie_et_traitement_prop_a_demontrer(Abi,Abi1,Tbox).
+    nl,write('Cette option n"existe pas : '),write(R),
+    nl, saisie_et_traitement_prop_a_demontrer(Abi,Abi1,Tbox).
 
 % ------------------------------------------------------------------------------------------
 % On met en place les méthodes utilisées plus haut
@@ -201,6 +201,10 @@ acquisition_prop_type1(Abi,Abi1,Tbox) :-
     % On entre le type de l'instance
     nl, write('Veuillez entrer l"instance :'),
     nl, read(I),
+
+    % On récupère la liste des noms d'instances et on vérifie l'appartenance de I à L
+    setof(X, iname(X), L),
+    member(I,L),
 
     % On entre le concept
     nl, write('Veuillez entrer le concept :'),
@@ -223,20 +227,28 @@ acquisition_prop_type1(Abi,Abi1,Tbox) :-
 % Méthode permettant l'acquisition de proposition du type 2 : (C1 and C2 compris dans 'neg')
 acquisition_prop_type2(Abi,Abi1,Tbox) :-
     % On entre le concept 1
-    nl, write('Veuillez entrer l"instance :'),
+    nl, write('Veuillez entrer le concept 1 :'),
     nl, read(C1),
 
     % On entre le concept 2
-    nl, write('Veuillez entrer l"instance :'),
+    nl, write('Veuillez entrer le concept 2 :'),
     nl, read(C2),
 
     % On effectue les manipulations sur les concepts
     % On formalise les concepts (C1 et C2) puis on effectue le remplacement (RC1 et RC2)
     concept(C1), concept(C2),
-    replace(and(C1, C2), and(RC1, RC2)).
+    replace(and(C1, C2), and(RC1, RC2)),
 
     % On génère une instance et on ajoute l'élément (I : C1 and C2) à la ABox
-    
+    genere(Inst),
+    concat([((Inst,and(RC1,RC2)))], Abi, Abi1),
+
+    % On affiche la ABox après modification
+    nl, write(Abi1).
+
+% ##########################################################################################
+
+% PARTIE 3
 
 % ##########################################################################################
 
