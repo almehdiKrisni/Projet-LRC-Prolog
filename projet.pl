@@ -10,8 +10,15 @@
 % ##########################################################################################
 
 programme :- 
+    nl, write('PROJET LRC - KRISNI Almehdi et JDAY Achraf'), nl,
+
+    nl, write('####################################### Premiere partie #######################################'), nl,
     premiere_etape(TBox, Abi, Abr),
+
+    nl, write('####################################### Deuxieme partie #######################################'), nl,
     deuxieme_etape(Abi, Abi1, Tbox),
+
+    nl, write('####################################### Troisieme partie #######################################'), nl,
     troisieme_etape(Abi1, Abr).
 
 % ##########################################################################################
@@ -24,8 +31,13 @@ programme :-
 % Ces listes évolueront au fur et à mesure qu'on soumettra des propositions à la démonstration.
 premiere_etape(Tbox, Abi, Abr) :-
     setof((X, Y), equiv(X, Y), Tbox),
+    nl, write('Tbox = '), write(Tbox), nl,
+
     setof((X, Y), inst(X, Y), Abi),
-    setof((X, Y, Z), instR(X, Y, Z), Abr).
+    nl, write('Abi = '), write(Abi), nl,
+
+    setof((X, Y, Z), instR(X, Y, Z), Abr),
+    nl, write('Abr = '), write(Abr), nl.
 
 % ##########################################################################################
 
@@ -43,7 +55,7 @@ deuxieme_etape(Abi,Abi1,Tbox) :-
 saisie_et_traitement_prop_a_demontrer(Abi,Abi1,Tbox) :-
     nl,write('Entrer le numero du type de proposition que l"on souhaite demontrer :'),
     nl,write('\tType 1 - Une instance donnee appartient a un concept donne.'),
-    nl,write('\tType 2 - Deux concepts nelements en commun dont l"intersection est vide (negation).'),
+    nl,write('\tType 2 - Deux concepts n-elements en commun dont l"intersection est vide (negation).'),
     nl,read(R),
     suite(R,Abi,Abi1,Tbox), !.
 
@@ -60,7 +72,7 @@ suite(2,Abi,Abi1,Tbox) :-
 % ------------------------------------------------------------------------------------------
 
 suite(R,Abi,Abi1,Tbox) :-
-    nl,write('Cette option n"existe pas :'),write(R),
+    nl,write('Cette option n"existe pas.'),
     nl, saisie_et_traitement_prop_a_demontrer(Abi,Abi1,Tbox).
 
 % ------------------------------------------------------------------------------------------
@@ -240,7 +252,10 @@ enleve(X,[Y|L],[Y|L2]) :- enleve(X,L,L2).
 
 % ------------------------------------------------------------------------------------------
 
-% Prédicat de génération d'un nouvel identificateur qui est fourni en sortie dans Nom
+% Prédicat compteur et prédicat de génération d'un nouvel identificateur 
+% qui est fourni en sortie dans Nom
+compteur(1).
+
 genere(Nom) :-  compteur(V), nombre(V,L1),
                 concat([105,110,115,116],L1,L2),
                 V1 is V+1,
@@ -268,8 +283,6 @@ chiffre_car(6,'6').
 chiffre_car(7,'7').
 chiffre_car(8,'8').
 chiffre_car(9,'9').
-
-compteur(1).
 
 % ------------------------------------------------------------------------------------------
 
@@ -329,11 +342,20 @@ tri_Abox([E|Abi],Lie,Lpt,Li,Lu,[E|Ls]) :-
 % ------------------------------------------------------------------------------------------
 
 % Prédicat réalisant la résolution de propositions
-resolution(Lie,Lpt,Li,Lu,Ls,Abr):-
-    verificationClash(Ls).
+resolution([],[],[],[],Ls,Abr) :- 
+    not(verificationClash(Ls)), nl, !.
 
-resolution(Lie,Lpt,Li,Lu,Ls,Abr):-
-    complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
+resolution(Lie,Lpt,Li,Lu,Ls,Abr) :- 
+    verificationClash(Ls), Lie \== [], complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
+
+resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-	
+    verificationClash(Ls),	Li \== [], transformation_and(Lie,Lpt,Li,Lu,Ls,Abr).
+
+resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-	
+    verificationClash(Ls),	Lpt \==[], deduction_all(Lie,Lpt,Li,Lu,Ls,Abr).
+
+resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-	
+    verificationClash(Ls),	Lu \==[], transformation_or(Lie,Lpt,Li,Lu,Ls,Abr).
 
 % ------------------------------------------------------------------------------------------
 
@@ -365,7 +387,7 @@ complete_some([],Lpt,Li,Lu,Ls,Abr):-
 complete_some([(I1,some(R,C))|Lie],Lpt,Li,Lu,Ls,Abr) :-
     genere(I2),
     Abr1 = Abr,
-    evolue((I,C),Lie,Lpt,Li,Lu,Ls,Lie1,Lpt1,Li1,Lu1,Ls1),
+    evolue((I2,C),Lie,Lpt,Li,Lu,Ls,Lie1,Lpt1,Li1,Lu1,Ls1),
     Abr2 = [(I1,I2,R)|Abr],
     resolution(Lie1,Lpt1,Li1,Lu1,Ls1,[(I1,I2,R)|Abr]).
 
