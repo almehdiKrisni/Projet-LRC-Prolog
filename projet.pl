@@ -1,7 +1,18 @@
 %                                                 PROJET
 %                                              LRC - M1 DAC
-%                                     KRISNI Almehdi - J'DAY Achraf
+%                                     KRISNI Almehdi - JDAY Achraf
 %                               https://github.com/krisninho2000/Projet_LRC
+
+% ##########################################################################################
+
+% MAIN
+
+% ##########################################################################################
+
+programme :- 
+    premiere_etape(TBox, Abi, Abr),
+    deuxieme_etape(Abi, Abi1, Tbox),
+    troisieme_etape(Abi1, Abr).
 
 % ##########################################################################################
 
@@ -118,18 +129,6 @@ troisieme_etape(Abi,Abr) :-
     tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls),
     resolution(Lie,Lpt,Li,Lu,Ls,Abr),
     nl,write('Youpiiiiii, on a demontre la proposition initiale !!!').
-
-% ##########################################################################################
-
-% MAIN
-
-% ##########################################################################################
-
-programme :- 
-    premiere_etape(TBox, Abi, Abr),
-    deuxieme_etape(Abi, Abi1, Tbox),
-    troisieme_etape(Abi1, Abr).
-
 
 % ##########################################################################################
 
@@ -330,28 +329,11 @@ tri_Abox([E|Abi],Lie,Lpt,Li,Lu,[E|Ls]) :-
 % ------------------------------------------------------------------------------------------
 
 % Prédicat réalisant la résolution de propositions
-resolution([],[],[],[],Ls,Abr) :- 
-    not(verificationClash(Ls)), write("Feuille Ouverte"), nl, !.
+resolution(Lie,Lpt,Li,Lu,Ls,Abr):-
+    verificationClash(Ls).
 
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
-	verificationClash(Ls),
-	Lie \== [],
-	complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
-
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
-	verificationClash(Ls),
-	Li \== [],
-	transformation_and(Lie,Lpt,Li,Lu,Ls,Abr).
-
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
-	verificationClash(Ls),
-	Lpt \==[],
-	deduction_all(Lie,Lpt,Li,Lu,Ls,Abr).
-
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
-	verificationClash(Ls),
-	Lu \==[],
-	transformation_or(Lie,Lpt,Li,Lu,Ls,Abr).
+resolution(Lie,Lpt,Li,Lu,Ls,Abr):-
+    complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
 
 % ------------------------------------------------------------------------------------------
 
