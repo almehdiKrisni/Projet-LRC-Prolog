@@ -187,6 +187,7 @@ inst(david,sculpture).
 inst(sonnets,livre).
 inst(vinci,personne).
 inst(joconde,objet).
+inst(socrate,personne).
 
 % ABox de relations
 instR(michelAnge, david, aCree). % Signifie que Michel-Ange a créé David
@@ -343,11 +344,18 @@ tri_Abox([E|Abi],Lie,Lpt,Li,Lu,[E|Ls]) :-
 % ------------------------------------------------------------------------------------------
 
 % Prédicat réalisant la résolution de propositions
-resolution(Lie,Lpt,Li,Lu,Ls,Abr):-
-    verificationClash(Ls).
-
-resolution(Lie,Lpt,Li,Lu,Ls,Abr):-
-    complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
+resolution([],[],[],[],Ls,Abr) :- 
+    not(verificationClash(Ls)), !.
+ 
+resolution(Lie,Lpt,Li,Lu,Ls,Abr) :- 
+    verificationClash(Ls), Lie\==[], complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
+ 
+resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-	
+    verificationClash(Ls), Li\==[],transformation_and(Lie,Lpt,Li,Lu,Ls,Abr).
+ 
+ esolution(Lie,Lpt,Li,Lu,Ls,Abr) :-	
+    verificationClash(Ls), Lpt\==[], deduction_all(Lie,Lpt,Li,Lu,Ls,Abr).
+ 
 
 % ------------------------------------------------------------------------------------------
 
