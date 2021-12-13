@@ -96,7 +96,7 @@ acquisition_prop_type1(Abi,Abi1,Tbox) :-
     verificationConcept(C),
 
     % On effectue les manipulations sur le concept
-    % On formalise le concept (C), on le remplace (RC) puis on effectue sa négation (NRC)
+    % On le remplace (RC) puis on effectue sa négation (NRC)
     replace(C, RC),
     nnf(not(RC),NRC),
 
@@ -122,13 +122,13 @@ acquisition_prop_type2(Abi,Abi1,Tbox) :-
     verificationConcept(C2),
 
     % On effectue les manipulations sur les concepts
-    % On formalise les concepts (C1 et C2) puis on effectue le remplacement (RC1 et RC2)
-    concept(C1), concept(C2),
-    replace(and(C1, C2), and(RC1, RC2)),
+    % On effectue le remplacement (RC) puis on on effectue sa négation (NRC)
+    replace(and(C1, C2), RC),
+    nnf(RC, NRC),
 
     % On génère une instance et on ajoute l'élément (I : C1 and C2) à la ABox
     genere(Inst),
-    concat([((Inst,and(RC1,RC2)))], Abi, Abi1).
+    concat([((Inst,NRC))], Abi, Abi1).
 
 % ##########################################################################################
 
@@ -161,8 +161,8 @@ cnamea(objet).
 cnamea(sculpture).
 cnamea(anything).
 cnamea(nothing).
-cnamena(auteur).
 
+cnamena(auteur).
 cnamena(editeur).
 cnamena(sculpteur).
 cnamena(parent).
@@ -321,7 +321,8 @@ verificationConcept(all(R, C)) :-
 
 % ------------------------------------------------------------------------------------------
 
-% Prédicat de tri des différentes box
+% Prédicat de tri des différentes listes lors de la résolution
+% Voir l'énoncé du projet ou le rapport pour plus de précision par rapport aux listes
 tri_Abox([],[],[],[],[],[]).
 
 tri_Abox([(I,some(R,C))|Abi],[(I,some(R,C))|Lie],Lpt,Li,Lu,Ls) :- 
@@ -359,7 +360,7 @@ resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-
 
 % ------------------------------------------------------------------------------------------
 
-% Prédicat réalisant la vérification de problèmes lors de la résolution de proposition
+% Prédicat réalisant la vérification de clashs lors de la résolution de proposition
 verificationClash([(I,C)|Ls]) :-
     nnf(not(C),NC),
     member((I,NC), Ls).
@@ -381,7 +382,7 @@ evolue(Elem, Lie, Lpt, Li, Lu, Ls, Lie, Lpt, Li, Lu, [(Elem)|Ls]).
 
 % Prédicat de complétion
 % Représente la règle : 'il existe'
-complete_some([],Lpt,Li,Lu,Ls,Abr):-
+complete_some([],Lpt,Li,Lu,Ls,Abr) :-
     transformation_and([],Lpt,Li,Lu,Ls,Abr).
 
 complete_some([(I1,some(R,C))|Lie],Lpt,Li,Lu,Ls,Abr) :-
