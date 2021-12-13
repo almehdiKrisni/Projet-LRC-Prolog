@@ -343,20 +343,11 @@ tri_Abox([E|Abi],Lie,Lpt,Li,Lu,[E|Ls]) :-
 % ------------------------------------------------------------------------------------------
 
 % Prédicat réalisant la résolution de propositions
-resolution([],[],[],[],Ls,Abr) :- 
-    not(verificationClash(Ls)), nl, !.
+resolution(Lie,Lpt,Li,Lu,Ls,Abr):-
+    verificationClash(Ls).
 
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :- 
-    verificationClash(Ls), Lie \== [], complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
-
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-	
-    verificationClash(Ls),	Li \== [], transformation_and(Lie,Lpt,Li,Lu,Ls,Abr).
-
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-	
-    verificationClash(Ls),	Lpt \==[], deduction_all(Lie,Lpt,Li,Lu,Ls,Abr).
-
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-	
-    verificationClash(Ls),	Lu \==[], transformation_or(Lie,Lpt,Li,Lu,Ls,Abr).
+resolution(Lie,Lpt,Li,Lu,Ls,Abr):-
+    complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
 
 % ------------------------------------------------------------------------------------------
 
