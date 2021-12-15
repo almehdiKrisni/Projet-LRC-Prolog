@@ -345,31 +345,41 @@ tri_Abox([E|Abi],Lie,Lpt,Li,Lu,[E|Ls]) :-
 % ------------------------------------------------------------------------------------------
 
 % Prédicat réalisant la résolution de propositions
-resolution([], [], [], [], Ls, _) :- 
-    verificationClash([], [], [], [], Ls, Ls). 
+resolution([],[],[],[],Ls,Abr) :- 
+    not(verificationClash(Ls)), nl, !.
 
-resolution(Lie, Lpt, Li, Lu, Ls, Abr) :- 
-	verificationClash(Lie, Lpt, Li, Lu, Ls, Ls),
-    (complete_some(Lie, Lpt, Li, Lu, Ls, Abr);
-	transformation_and(Lie,Lpt,Li,Lu,Ls,Abr);
-	deduction_all(Lie,Lpt,Li,Lu,Ls,Abr);
-	transformation_or(Lie,Lpt,Li,Lu,Ls,Abr)).
+resolution(Lie,Lpt,Li,Lu,Ls,Abr) :- 
+    verificationClash(Ls), 
+    Lie \== [], 
+    complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
+
+resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-	
+    verificationClash(Ls),	
+    Li \== [], 
+    transformation_and(Lie,Lpt,Li,Lu,Ls,Abr).
+
+resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-	
+    verificationClash(Ls),	
+    Lpt \==[], 
+    deduction_all(Lie,Lpt,Li,Lu,Ls,Abr).
+
+resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-	
+    verificationClash(Ls),	
+    Lu \==[], 
+    transformation_or(Lie,Lpt,Li,Lu,Ls,Abr).
  
 
 % ------------------------------------------------------------------------------------------
 
 % Prédicat réalisant la vérification de clashs lors de la résolution de proposition
-verificationClash(Lie, Lpt, Li, Lu, Ls, Parcours) :- [(A, not(C))|Par] = Parcours,               /* Si la tete de la Abox à parcourir est un instanciation d'une négation de concept, alors on vérifie si l'instance qui instancie cette négation de concept instancie aussi ce concept (mais pas nié cette fois ci) dans toutes les sous-boxs, si c'est le cas renvoie false par récursivité... */
-					not(member((A, C), Lie)), 
-					not(member((A, C), Lpt)), 
-					not(member((A, C), Li)), 
-					not(member((A, C), Lu)), 
-					not(member((A, C), Ls)), 
-					verificationClash(Lie, Lpt, Li, Lu, Ls, Par), !.                             /* ... sinon, cela signifie qu'il n'y a pas de clash avec cette instanciation de négation de concept, on passe donc au prochain élément de la Abox à parcourir */
-					
-verificationClash(Lie, Lpt, Li, Lu, Ls, Parcours) :- [(_, C)|Par] = Parcours,                    /* Si la tete de la Abox à parcourir n'est pas une instanciation d'une négation de concept alors on passe directement à l'instanciation suivante de la Abox à parcourir */
-					C \= not(_), 
-					verificationClash(Lie, Lpt, Li, Lu, Ls, Par), !.
+verificationClash([(I,C)|Ls]) :-
+    nnf(not(C),NC),
+    member((I,NC),Ls),
+    write('\nOn trouve un clash avec : '),
+    write(I), nl.
+
+verificationClash([_|Ls]) :- 
+    verificationClash(Ls).
 
 % ------------------------------------------------------------------------------------------
 
@@ -430,16 +440,16 @@ transformation_and(Lie,Lpt,[(I,and(A,B))|Li],Lu,Ls,Abr) :-
 
 % Prédicat effectuant l'affichage de la ABox
 affiche_evolution_Abox(Lie,Lpt,Li,Lu,Ls,Abr) :- 
-    write('###################################################################################')
-    nl, write('Liste Abi :''),
-    affiche(Lie), 
-    affiche(Lpt), 
-    affiche(Li), 
-    affiche(Lu), 
+    write('\n###################################################################################\n'),
+    nl, write('Liste Abi :'),
+    affiche(Lie),
+    affiche(Lpt),
+    affiche(Li),
+    affiche(Lu),
     affiche(Ls),
-    nl, write('Liste Abr :'), affiche(Abr), !.
+    nl, write('\nListe Abr :'), affiche(Abr), !.
 
-% Prédicat permettant l'affichage d'une liste et d'éléments
+% Prédicat permettant l'affichage d'une liste d'éléments et d'éléments sous une forme précise (and, or)
 affiche([]).
 
 affiche([H|T]) :- affiche(H), affiche(T).
