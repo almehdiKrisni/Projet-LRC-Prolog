@@ -440,8 +440,8 @@ transformation_and(Lie,Lpt,[(I,and(A,B))|Li],Lu,Ls,Abr) :-
 
 % Prédicat effectuant l'affichage de la ABox
 affiche_evolution_Abox(Lie,Lpt,Li,Lu,Ls,Abr) :- 
-    write('\n###################################################################################\n'),
-    nl, write('Liste Abi :'),
+    write('\n###################################################################################'),
+    nl, write('\nListe Abi :'),
     affiche(Lie),
     affiche(Lpt),
     affiche(Li),
