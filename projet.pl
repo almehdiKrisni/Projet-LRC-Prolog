@@ -447,7 +447,8 @@ affiche_evolution_Abox(Lie,Lpt,Li,Lu,Ls,Abr) :-
     affiche(Li),
     affiche(Lu),
     affiche(Ls),
-    nl, write('\nListe Abr :'), affiche(Abr), !.
+    nl, write('\nListe Abr :'), 
+    affiche(Abr), !.
 
 % Prédicat permettant l'affichage d'une liste d'éléments et d'éléments sous une forme précise (and, or)
 affiche([]).
