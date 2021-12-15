@@ -72,7 +72,7 @@ suite(2,Abi,Abi1,Tbox) :-
 % ------------------------------------------------------------------------------------------
 
 suite(R,Abi,Abi1,Tbox) :-
-    nl,write('Cette option n"existe pas.'),
+    nl, write('Cette option n"existe pas.'),
     nl, saisie_et_traitement_prop_a_demontrer(Abi,Abi1,Tbox).
 
 % ------------------------------------------------------------------------------------------
@@ -139,6 +139,7 @@ acquisition_prop_type2(Abi,Abi1,Tbox) :-
 % Prédicat de la troisième étape
 troisieme_etape(Abi,Abr) :- 
     tri_Abox(Abi,Lie,Lpt,Li,Lu,Ls),
+    affiche_evolution_Abox(Lie,Lpt,Li,Li,Ls,Abr),
     resolution(Lie,Lpt,Li,Lu,Ls,Abr),
     nl,write('Youpiiiiii, on a demontre la proposition initiale !!!').
 
@@ -344,28 +345,31 @@ tri_Abox([E|Abi],Lie,Lpt,Li,Lu,[E|Ls]) :-
 % ------------------------------------------------------------------------------------------
 
 % Prédicat réalisant la résolution de propositions
-resolution([],[],[],[],Ls,Abr) :- 
-    not(verificationClash(Ls)), !.
- 
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :- 
-    verificationClash(Ls), Lie\==[], complete_some(Lie,Lpt,Li,Lu,Ls,Abr).
- 
-resolution(Lie,Lpt,Li,Lu,Ls,Abr) :-	
-    verificationClash(Ls), Li\==[],transformation_and(Lie,Lpt,Li,Lu,Ls,Abr).
- 
- esolution(Lie,Lpt,Li,Lu,Ls,Abr) :-	
-    verificationClash(Ls), Lpt\==[], deduction_all(Lie,Lpt,Li,Lu,Ls,Abr).
+resolution([], [], [], [], Ls, _) :- 
+    verificationClash([], [], [], [], Ls, Ls). 
+
+resolution(Lie, Lpt, Li, Lu, Ls, Abr) :- 
+	verificationClash(Lie, Lpt, Li, Lu, Ls, Ls),
+    (complete_some(Lie, Lpt, Li, Lu, Ls, Abr);
+	transformation_and(Lie,Lpt,Li,Lu,Ls,Abr);
+	deduction_all(Lie,Lpt,Li,Lu,Ls,Abr);
+	transformation_or(Lie,Lpt,Li,Lu,Ls,Abr)).
  
 
 % ------------------------------------------------------------------------------------------
 
 % Prédicat réalisant la vérification de clashs lors de la résolution de proposition
-verificationClash([(I,C)|Ls]) :-
-    nnf(not(C),NC),
-    member((I,NC), Ls).
-
-verificationClash([_|Ls]) :- 
-    verificationClash(Ls).
+verificationClash(Lie, Lpt, Li, Lu, Ls, Parcours) :- [(A, not(C))|Par] = Parcours,               /* Si la tete de la Abox à parcourir est un instanciation d'une négation de concept, alors on vérifie si l'instance qui instancie cette négation de concept instancie aussi ce concept (mais pas nié cette fois ci) dans toutes les sous-boxs, si c'est le cas renvoie false par récursivité... */
+					not(member((A, C), Lie)), 
+					not(member((A, C), Lpt)), 
+					not(member((A, C), Li)), 
+					not(member((A, C), Lu)), 
+					not(member((A, C), Ls)), 
+					verificationClash(Lie, Lpt, Li, Lu, Ls, Par), !.                             /* ... sinon, cela signifie qu'il n'y a pas de clash avec cette instanciation de négation de concept, on passe donc au prochain élément de la Abox à parcourir */
+					
+verificationClash(Lie, Lpt, Li, Lu, Ls, Parcours) :- [(_, C)|Par] = Parcours,                    /* Si la tete de la Abox à parcourir n'est pas une instanciation d'une négation de concept alors on passe directement à l'instanciation suivante de la Abox à parcourir */
+					C \= not(_), 
+					verificationClash(Lie, Lpt, Li, Lu, Ls, Par), !.
 
 % ------------------------------------------------------------------------------------------
 
@@ -421,3 +425,56 @@ transformation_and(Lie,Lpt,[(I,and(A,B))|Li],Lu,Ls,Abr) :-
     evolue((I,A),Lie,Lpt,Li,Lu,Ls,Lie1,Lpt1,Li1,Lu1,Ls1),
     evolue((I,B),Lie1,Lpt1,Li1,Lu1,Ls1,Lie2,Lpt2,Li2,Lu2,Ls2),
     resolution(Lie2,Lpt2,Li2,Lu2,Ls2,Abr).
+
+% ------------------------------------------------------------------------------------------
+
+% Prédicat effectuant l'affichage de la ABox
+affiche_evolution_Abox(Lie,Lpt,Li,Lu,Ls,Abr) :- 
+    write('###################################################################################')
+    nl, write('Liste Abi :''),
+    affiche(Lie), 
+    affiche(Lpt), 
+    affiche(Li), 
+    affiche(Lu), 
+    affiche(Ls),
+    nl, write('Liste Abr :'), affiche(Abr), !.
+
+% Prédicat permettant l'affichage d'une liste et d'éléments
+affiche([]).
+
+affiche([H|T]) :- affiche(H), affiche(T).
+
+affiche((I,some(R,C))) :- 
+    nl,write('\t'), affiche(I), write(' : ∃'), affiche(R), write('.'),affiche(C), !.
+
+affiche((I,all(R,C))) :-  
+    nl,write('\t'), affiche(I), write(' : ∀'), affiche(R), write('.'),affiche(C), !.
+
+affiche((I, and(C,D))) :- 
+    nl,write('\t'), affiche(I), write(' : '), affiche(C), write(' ⊓ '), affiche(D), !.
+
+affiche((I,or(C,D))) :- 
+    nl,write('\t'), affiche(I), write(' : ') , affiche(C), write(' ⊔ '), affiche(D), !.
+
+affiche((not(C))) :- 
+    write('¬'), affiche(C).
+
+affiche((I,C,R)) :- 
+    nl, write('\t<'), affiche(I), write(', '), affiche(C), write('> : ') , affiche(R), !.
+
+affiche((I,C)) :- 
+    nl,write('\t'), affiche(I), write(' : ') , affiche(C), !.
+
+affiche(some(R,C)) :- 
+    write(' ∃'), affiche(R),write('.'),affiche(C), !.
+
+affiche(all(R,C)) :- 
+    write(' ∀'), affiche(R),write('.'),affiche(C), !.
+
+affiche(and(C,D)) :- 
+    affiche(C), write(' ⊓ '), affiche(D), !.
+
+affiche(or(C,D)) :- 
+    affiche(C), write(' ⊔ '), affiche(D), !.
+
+affiche(C) :- write(C).
