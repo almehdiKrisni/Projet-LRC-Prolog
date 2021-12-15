@@ -456,19 +456,19 @@ affiche([]).
 affiche([H|T]) :- affiche(H), affiche(T).
 
 affiche((I,some(R,C))) :- 
-    nl,write('\t'), affiche(I), write(' : ∃'), affiche(R), write('.'),affiche(C), !.
+    nl,write('\t'), affiche(I), write(' : some.'), affiche(R), write('.'),affiche(C), !.
 
 affiche((I,all(R,C))) :-  
-    nl,write('\t'), affiche(I), write(' : ∀'), affiche(R), write('.'),affiche(C), !.
+    nl,write('\t'), affiche(I), write(' : all.'), affiche(R), write('.'),affiche(C), !.
 
 affiche((I, and(C,D))) :- 
-    nl,write('\t'), affiche(I), write(' : '), affiche(C), write(' ⊓ '), affiche(D), !.
+    nl,write('\t'), affiche(I), write(' : '), affiche(C), write(' and '), affiche(D), !.
 
 affiche((I,or(C,D))) :- 
-    nl,write('\t'), affiche(I), write(' : ') , affiche(C), write(' ⊔ '), affiche(D), !.
+    nl,write('\t'), affiche(I), write(' : ') , affiche(C), write(' or '), affiche(D), !.
 
 affiche((not(C))) :- 
-    write('¬'), affiche(C).
+    write('not '), affiche(C).
 
 affiche((I,C,R)) :- 
     nl, write('\t<'), affiche(I), write(', '), affiche(C), write('> : ') , affiche(R), !.
@@ -477,15 +477,15 @@ affiche((I,C)) :-
     nl,write('\t'), affiche(I), write(' : ') , affiche(C), !.
 
 affiche(some(R,C)) :- 
-    write(' ∃'), affiche(R),write('.'),affiche(C), !.
+    write(' some.'), affiche(R),write('.'),affiche(C), !.
 
 affiche(all(R,C)) :- 
-    write(' ∀'), affiche(R),write('.'),affiche(C), !.
+    write(' all.'), affiche(R),write('.'),affiche(C), !.
 
 affiche(and(C,D)) :- 
-    affiche(C), write(' ⊓ '), affiche(D), !.
+    affiche(C), write(' and '), affiche(D), !.
 
 affiche(or(C,D)) :- 
-    affiche(C), write(' ⊔ '), affiche(D), !.
+    affiche(C), write(' or '), affiche(D), !.
 
 affiche(C) :- write(C).
